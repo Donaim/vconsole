@@ -26,7 +26,7 @@ public class vtextbox : Control {
     // FUNCTIONALITY
 
     public override string Text {
-        get => string.Join("\n", lh.list.Source);
+        get => string.Join("\n", lh.list.Source.Select(o => o.Text));
         set => lh.SetText(value);
     }
     public int TextLength => Text.Length;
