@@ -153,14 +153,19 @@ public partial class line {
     public Brush cursorBrush {get; set;} = Brushes.Blue;
 
     public void Draw(Graphics g, Point pos) {
+        int clipWidth = (int)g.ClipBounds.Width - pos.X - pos.X;
 
-        int offset = -Max(0, Width - ((int)g.ClipBounds.Width - pos.X - pos.X - 1));
-        pos.Offset(offset,0);
+        int w = Width;
+        int wbc = WidthBeforeCursor;
+        int coff = -Max(0, (w - wbc) - clipWidth);
+
+        int offset = -Max(0, (w + coff) - (clipWidth - 1));
+        pos.Offset(offset, 0);
         
         g.DrawString(s, font, brush, pos);
 
         if(lh.Current == this && CursorVisible) {
-            g.FillRectangle(cursorBrush, pos.X + WidthBeforeCursor + 1, pos.Y, 1, Height);
+            g.FillRectangle(cursorBrush, pos.X + wbc + 1, pos.Y, 1, Height);
         }
     }
 }
