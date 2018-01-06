@@ -26,13 +26,14 @@ public class vtextbox : Control {
     // FUNCTIONALITY
 
     public override string Text {
-        get => string.Join("\n", lh.get);
+        get => string.Join("\n", lh.list.Source);
         set => lh.SetText(value);
     }
     public int TextLength => Text.Length;
-    public void AppendText(string s) 
+    public void AppendText(string s, bool refresh = true) 
     {
         lh.Current.Insert(s);
+        if(refresh) { Refresh(); }
     }
 
     public int DX {get; set;} = 5;
@@ -47,23 +48,21 @@ public class vtextbox : Control {
         int h = 0, 
             hbc = 0; //height before cursor
         int i = 0;
-        foreach(var l in lh.get) {
+        lh.list.forEach(l => {
             h += l.Height;
             if(i < lh.LineIndex) { hbc = h; }
             i++;
-        }
+        });
 
         int coff = -Max(0, (h - hbc) - clipHeight);
 
         int offset = -Max(0, (h + coff) - (clipHeight - 1));
         p.Offset(0, offset);
         
-        // int h = 0;
-        foreach (var l in lh.get)
-        {
+        lh.list.forEach(l => {
             l.Draw(e.Graphics, p);
             p.Offset(0, l.Height);
-        }
+        });
     }
     protected override void OnPaintBackground(PaintEventArgs e) { } //SHOULD BE EMPTY
     

@@ -6,20 +6,46 @@ using System.Linq;
 
 using static System.Math;
 
+public class lockedList<T> { 
+    readonly List<T> src = new List<T>();
+    public IReadOnlyList<T> Source => src.ToArray();
+    readonly object locker = new object();
+    
+    public void forEach(Action<T> f) {
+        lock(locker) {
+            foreach(var l in src) { f(l); }
+        }
+    }
+
+    public void Add(T o) { lock(locker) { src.Add(o); }  }
+    public void Insert(int at, T o) { lock(locker) { src.Insert(at, o); } }
+    public bool Remove(T o) { lock(locker) { return src.Remove(o); } }
+    public void Clear() { lock(locker) { src.Clear(); } }
+    public T First() { return src[0]; }
+    public T Last() { return src[src.Count - 1]; }
+
+    public int Count => src.Count;
+    public T Get(int index) { return src[index]; }
+}
+
 public class lineHandler {
-    vtextbox parent;
+    readonly vtextbox parent;
+    public readonly lockedList<line> list;
     public lineHandler(vtextbox p)
     {
         parent = p;
-        lines.Add(DefaultLine());
+        list = new lockedList<line>();
+        list.Add(DefaultLine());
+        // lines.Add(DefaultLine());
     }
 
 
-    List<line> lines = new List<line>();
-    public IReadOnlyList<line> get => lines;
-    public line Current => lines[lineIndex];
+    // List<line> lines = new List<line>();
+    // public IReadOnlyList<line> get => lines;
+    public int Count => list.Count;
+    public line Current => list.Get(lineIndex);
 
-    public int MaxInd => lines.Count - 1;
+    public int MaxInd => list.Count - 1;
     int lineIndex = 0;
     public int LineIndex { 
         get => lineIndex; 
@@ -36,10 +62,10 @@ public class lineHandler {
         var l = DefaultLine(s);
 
         if(lineIndex >= MaxInd) {
-            lines.Add(l);
+            list.Add(l);
         }
         else{
-            lines.Insert(lineIndex + 1, l);
+            list.Insert(lineIndex + 1, l);
         }
         LineIndex++;
     }
@@ -47,10 +73,10 @@ public class lineHandler {
         if(Current.CursorIndex > 0) {
             Current.Remove();
         }
-        else if (lines.Count > 1) {
+        else if (Count > 1) {
             var curr = Current;
             curr.Left();
-            lines.Remove(curr);
+            list.Remove(curr);
 
             if(curr.Length > 0) {
                 int cindex = Current.CursorIndex;
@@ -62,16 +88,16 @@ public class lineHandler {
 
     public void SetText(string s) {
         var ls = s.Split('\n');
-        lines.Clear();
+        list.Clear();
         foreach(var l in ls) { AddGo(l); }
     } 
 
     public void GoUp() {
-        if(Current == lines.First()) { Current.CursorIndex = 0; }
+        if(Current == list.First()) { Current.CursorIndex = 0; }
         else { LineIndex--; }
     }
     public void GoDown() {
-        if(Current == lines.Last()) { Current.CursorIndex = Current.Length; }        
+        if(Current == list.Last()) { Current.CursorIndex = Current.Length; }        
         else { LineIndex++; }
     } 
 
@@ -80,13 +106,12 @@ public class lineHandler {
         Console.WriteLine(); Console.WriteLine();
         
         int pad = 0;
-        foreach(var l in lines) { pad = Max(l.Length, pad); }
+        list.forEach(o => pad = Max(o.Length, pad));
 
         int i = 0;
-        foreach (var l in lines)
-        {
-           Console.WriteLine($"{++i}. {('\"' + l.Text + '\"').PadRight(pad + 2)} [c:{l.CursorIndex}, l:{l.Length}, s:{l.se.Length}] {(Current == l ? "<" : "")} "); 
-        }
+        list.forEach(l => 
+           Console.WriteLine($"{++i}. {('\"' + l.Text + '\"').PadRight(pad + 2)} [c:{l.CursorIndex}, l:{l.Length}, s:{l.se.Length}] {(Current == l ? "<" : "")} ")
+        );
 #endif
     }
 }

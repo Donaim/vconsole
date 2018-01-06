@@ -89,14 +89,14 @@ public partial class line {
 
     public void Right() {
         if(CursorIndex < Length) { CursorIndex++; }
-        else if(lh.Current != lh.get.Last()) {
+        else if(lh.Current != lh.list.Last()) {
             lh.GoDown();
             lh.Current.CursorIndex = 0;
         }
     } 
     public void Left() {
         if(CursorIndex > 0) { CursorIndex--; }
-        else if(lh.Current != lh.get.First()) {
+        else if(lh.Current != lh.list.First()) {
             lh.GoUp();
             lh.Current.CursorIndex = lh.Current.Length;
         }
