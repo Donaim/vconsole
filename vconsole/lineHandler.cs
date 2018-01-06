@@ -7,10 +7,13 @@ using System.Linq;
 using static System.Math;
 
 public class lineHandler {
-    public lineHandler()
+    vtextbox parent;
+    public lineHandler(vtextbox p)
     {
-        lines.Add(new line(this, "", 0));
+        parent = p;
+        lines.Add(DefaultLine());
     }
+
 
     List<line> lines = new List<line>();
     public IReadOnlyList<line> get => lines;
@@ -23,8 +26,14 @@ public class lineHandler {
         set => lineIndex = Max(0, Min(value, MaxInd)); 
     }
 
-    public void AddGo() {
-        var l = new line(this, Current.Split(), 0);
+    public line DefaultLine(string s = "") => new line(this, s, 0) 
+        {
+            brush = new SolidBrush(parent.ForeColor),
+            font = parent.Font,
+        }; 
+    public void AddGo() => AddGo(Current.Split());
+    public void AddGo(string s) {
+        var l = DefaultLine(s);
 
         if(lineIndex >= MaxInd) {
             lines.Add(l);
@@ -43,6 +52,12 @@ public class lineHandler {
             GoUp();
         }
     }
+
+    public void SetText(string s) {
+        var ls = s.Split('\n');
+        lines.Clear();
+        foreach(var l in ls) { AddGo(l); }
+    } 
 
     public void GoUp() {
         if(Current == lines.First()) { Current.CursorIndex = 0; }

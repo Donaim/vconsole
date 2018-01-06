@@ -8,7 +8,7 @@ using static System.Math;
 
 public partial class line{
     class selection {
-        line parent;
+        readonly line parent;
         public selection(line p) {
             parent = p;
         }
@@ -62,6 +62,22 @@ public partial class line {
     public void Insert(object obj) => Insert(obj.ToString());
     public void Insert(string what) 
     {
+        var split = what.Split('\n'); 
+
+        if(split.Length == 1) { insertHere(split[0]); }
+        else{
+            var end = this.Split();
+
+            insertHere(split[0]);
+
+            for(int i = 1; i < split.Length - 1; i++) {
+                lh.AddGo(split[i]);
+            }
+
+            lh.AddGo(split.Last() + end);
+        }
+    }
+    void insertHere(string what) {
         if(CursorIndex >= MaxInd) {
             s += what;
         } 

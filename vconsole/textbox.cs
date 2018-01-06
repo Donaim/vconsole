@@ -7,7 +7,7 @@ using System.Linq;
 using static System.Math;
 
 public class vtextbox : Control {
-    lineHandler lh = new lineHandler();
+    lineHandler lh;
 
     public vtextbox() {
         // BackgroundColor = Color.Black;
@@ -19,10 +19,25 @@ public class vtextbox : Control {
 
         KeyPress += KeyPressH;
         PreviewKeyDown += PreviewKeyDownH;
+
+        lh = new lineHandler(this);
     }
 
+    // FUNCTIONALITY
+
+    public override string Text {
+        get => string.Join("\n", lh.get);
+        set => lh.SetText(value);
+    }
+    int TextLength => Text.Length;
+    void AppendText(string s) 
+    {
+        lh.Current.Insert(s);
+    }
+
+    // GRAPHICS
     protected override void OnPaint(PaintEventArgs e) {
-        e.Graphics.Clear(Color.Red);
+        e.Graphics.Clear(BackColor);
 
         // int h = 0;
         Point p = new Point(5, 5);
@@ -34,6 +49,9 @@ public class vtextbox : Control {
     }
     protected override void OnPaintBackground(PaintEventArgs e) { } //SHOULD BE EMPTY
     
+
+    // INPUT
+
     bool skip = false;
     private void PreviewKeyDownH(object sender, PreviewKeyDownEventArgs e)
     {
@@ -66,7 +84,7 @@ public class vtextbox : Control {
                 break;
 
             case Keys.V when e.Control:
-                lh.Current.Insert(Clipboard.GetText());
+                AppendText(Clipboard.GetText());
                 break;
 
             default: return;
