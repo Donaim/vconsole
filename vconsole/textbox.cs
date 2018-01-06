@@ -70,10 +70,14 @@ public class vtextbox : Control {
 
     // INPUT
 
-    bool skip = false;
+    protected virtual void BeforeKeyDown(PreviewKeyDownEventArgs e, ref bool skipPress, ref bool skipKeyDown) {}
+    bool skipPress = false;
     private void PreviewKeyDownH(object sender, PreviewKeyDownEventArgs e)
     {
-        skip = false;
+        skipPress = false;
+        bool skipKeyDown = false;
+        BeforeKeyDown(e, ref skipPress, ref skipKeyDown);
+        if(skipKeyDown) { return; }
 
         switch (e.KeyCode)
         {
@@ -109,13 +113,16 @@ public class vtextbox : Control {
         }
 
         // e.Handled = true;
-        skip = true;
+        skipPress = true;
         Refresh();
         lh.printToConsole();
     }
+
+    protected virtual void BeforeKeyPress(KeyPressEventArgs e, ref bool skipPress) {}
     private void KeyPressH(object sender, KeyPressEventArgs e)
     {
-        if(skip) { return; }
+        BeforeKeyPress(e, ref skipPress);
+        if(skipPress) { return; }
 
         switch (e.KeyChar)
         {
