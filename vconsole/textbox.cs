@@ -70,13 +70,15 @@ public class vtextbox : Control {
 
     // INPUT
 
-    protected virtual void BeforeKeyDown(PreviewKeyDownEventArgs e, ref bool skipPress, ref bool skipKeyDown) {}
+    protected virtual void BeforeKeyDown(PreviewKeyDownEventArgs e, ref bool skipPress, ref bool skipNavigate, ref bool skipKeyDown) {}
     bool skipPress = false;
     private void PreviewKeyDownH(object sender, PreviewKeyDownEventArgs e)
     {
         skipPress = false;
-        bool skipKeyDown = false;
-        BeforeKeyDown(e, ref skipPress, ref skipKeyDown);
+        bool skipKeyDown = false, skipNavigate = false;
+        BeforeKeyDown(e, ref skipPress, ref skipNavigate, ref skipKeyDown);
+        
+        if(!skipNavigate) { if(PreviewNavigate(e)) { return; }}
         if(skipKeyDown) { return; }
 
         switch (e.KeyCode)
@@ -84,15 +86,27 @@ public class vtextbox : Control {
             case Keys.Back:
                 lh.Remove();
                 break;
-            case Keys.Escape:
-                // Close();
-                break;
             case Keys.Enter:
                 // Close();
                 lh.AddGo();
                 break;
 
-            case Keys.Left:
+            case Keys.V when e.Control:
+                AppendText(Clipboard.GetText());
+                break;
+
+            default: return;
+        }
+
+        skipPress = true;
+        Refresh();
+        lh.printToConsole();
+    }
+    bool PreviewNavigate(PreviewKeyDownEventArgs e)
+    {
+        switch (e.KeyCode)
+        {
+         case Keys.Left:
                 lh.Current.Left();
                 break;
             case Keys.Right:
@@ -105,17 +119,13 @@ public class vtextbox : Control {
                 lh.GoUp();
                 break;
 
-            case Keys.V when e.Control:
-                AppendText(Clipboard.GetText());
-                break;
-
-            default: return;
+            default: return false;
         }
 
-        // e.Handled = true;
+
         skipPress = true;
         Refresh();
-        lh.printToConsole();
+        return true;
     }
 
     protected virtual void BeforeKeyPress(KeyPressEventArgs e, ref bool skipPress) {}
