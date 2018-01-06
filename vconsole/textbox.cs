@@ -7,7 +7,7 @@ using System.Linq;
 using static System.Math;
 
 public class vtextbox : Control {
-    lineHandler lh;
+    protected readonly lineHandler lh;
 
     public vtextbox() {
         // BackgroundColor = Color.Black;
@@ -29,8 +29,8 @@ public class vtextbox : Control {
         get => string.Join("\n", lh.get);
         set => lh.SetText(value);
     }
-    int TextLength => Text.Length;
-    void AppendText(string s) 
+    public int TextLength => Text.Length;
+    public void AppendText(string s) 
     {
         lh.Current.Insert(s);
     }

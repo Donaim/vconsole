@@ -70,9 +70,15 @@ public class lineHandler {
 
     internal void printToConsole() {
 #if DEBUG
+        Console.WriteLine(); Console.WriteLine();
+        
+        int pad = 0;
+        foreach(var l in lines) { pad = Max(l.Length, pad); }
+
+        int i = 0;
         foreach (var l in lines)
         {
-           Console.WriteLine("> \"{0}\" [{1}] {2}", l.Text, l.CursorIndex, (Current == l ? "<" : "")); 
+           Console.WriteLine($"{++i}. {('\"' + l.Text + '\"').PadRight(pad + 2)} [c:{l.CursorIndex}, l:{l.Length}, s:{l.se.Length}] {(Current == l ? "<" : "")} "); 
         }
 #endif
     }

@@ -7,7 +7,7 @@ using System.Linq;
 using static System.Math;
 
 public partial class line{
-    class selection {
+    public class selection {
         readonly line parent;
         public selection(line p) {
             parent = p;
@@ -47,7 +47,7 @@ public partial class line {
     public bool CursorVisible {get; set;} = true;
     public int MaxInd => Text.Length - 1;
 
-    selection se;
+    public readonly selection se;
 
     public readonly lineHandler lh;
     public line(lineHandler lh, string initS = "", int initIndex = 0) {
@@ -91,12 +91,14 @@ public partial class line {
         if(CursorIndex < Length) { CursorIndex++; }
         else if(lh.Current != lh.get.Last()) {
             lh.GoDown();
+            lh.Current.CursorIndex = 0;
         }
     } 
     public void Left() {
         if(CursorIndex > 0) { CursorIndex--; }
         else if(lh.Current != lh.get.First()) {
             lh.GoUp();
+            lh.Current.CursorIndex = lh.Current.Length;
         }
     }
 
@@ -136,7 +138,7 @@ public partial class line {
     static readonly StringFormat measureFormat = new StringFormat( StringFormatFlags.MeasureTrailingSpaces );
     static readonly Graphics gserv = Graphics.FromImage(new Bitmap(400, 400));
     public int Width => (int) gserv.MeasureString(s, font, zeroP, measureFormat).Width;
-    public int Height => (int) gserv.MeasureString(s, font).Height;
+    public int Height => (int) gserv.MeasureString("I", font, zeroP, measureFormat).Height;
     public int WidthBeforeCursor {
         get
         {
