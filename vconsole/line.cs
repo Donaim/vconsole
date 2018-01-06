@@ -10,55 +10,18 @@ class line {
     string s = "";
     public string Text => s;
     public int Length => s.Length;
-    public void Insert(object obj) => Insert(obj.ToString());
-    public void Insert(string what) 
-    {
-        if(cindex >= MaxInd) {
-            s += what;
-        } 
-        else{
-            s = s.Insert(cindex, what); 
-        }
-        CursorIndex += what.Length; 
-    }
 
     int cindex = 0;
-    public int MaxInd => Text.Length - 1;
     public int CursorIndex {
         get => cindex;
         set => cindex = Max(0, Min(value, s.Length));
     }
-    public void Right() {
-        if(cindex < MaxInd) { CursorIndex++; }
-        else if(lh.Current != lh.get.Last()) {
-            lh.GoDown();
-        }
-    } 
-    public void Left() {
-        if(cindex > 0) { CursorIndex--; }
-        else if(lh.Current != lh.get.First()) {
-            lh.GoUp();
-        }
-    }
-   
-
-    public string Split() { // fore new line
-        if(cindex <= 0) { return ""; }
-        else if(cindex > MaxInd) { return ""; }
-        else {
-            string re = s.Substring(cindex);
-            s = s.Remove(cindex);
-            return re; 
-        }
-    }
-    public void Remove() {
-        Remove(1);
-    }
-    void Remove(int count) {
-        if(CursorIndex > 0) {
-            s = s.Remove(cindex - 1, count);
-            CursorIndex -= count;
-        }
+    public int MaxInd => Text.Length - 1;
+    
+    int seLength = 0;
+    public int SelectedLength {
+        get => seLength;
+        set => seLength = Max(0, Min(value, (Length + 1) - CursorIndex));
     }
 
     public readonly lineHandler lh;
@@ -68,6 +31,60 @@ class line {
         this.lh = lh;
     }
 
+
+    // Functionality
+    public void Insert(object obj) => Insert(obj.ToString());
+    public void Insert(string what) 
+    {
+        if(CursorIndex >= MaxInd) {
+            s += what;
+        } 
+        else{
+            s = s.Insert(CursorIndex, what); 
+        }
+        CursorIndex += what.Length; 
+    }
+
+    public void Right() {
+        if(CursorIndex < Length) { CursorIndex++; }
+        else if(lh.Current != lh.get.Last()) {
+            lh.GoDown();
+        }
+    } 
+    public void Left() {
+        if(CursorIndex > 0) { CursorIndex--; }
+        else if(lh.Current != lh.get.First()) {
+            lh.GoUp();
+        }
+    }
+
+    public string Split() { // fore new line
+        if(CursorIndex <= 0) { return ""; }
+        else if(CursorIndex > Length) { return ""; }
+        else {
+            string re = s.Substring(CursorIndex);
+            s = s.Remove(CursorIndex);
+            return re; 
+        }
+    }
+    public void Remove() {
+        if(SelectedLength <= 0) { SelectedLength++; }
+
+        if(CursorIndex > 0) {
+            s = s.Remove(CursorIndex - 1, SelectedLength);
+            CursorIndex -= SelectedLength;
+            SelectedLength = 0;
+        }
+    }
+    public void SelectRigth(int count) {
+        SelectedLength += count;
+    }
+    public void SelectLeft(int count) {
+        CursorIndex -= count;
+        SelectedLength += count;
+    }
+
+    // Graphics
     public Font font {get; set;} = new Font("Consolas", 12);
     public Brush brush {get; set;} = Brushes.Black;
 
@@ -79,9 +96,9 @@ class line {
     public int WidthBeforeCursor {
         get
         {
-            if (cindex <= 0) { return 0; }
-            else if(cindex > MaxInd) { return Width; }
-            else { return (int) gserv.MeasureString(s.Remove(cindex), font, zeroP, measureFormat ).Width; }
+            if (CursorIndex <= 0) { return 0; }
+            else if(CursorIndex > MaxInd) { return Width; }
+            else { return (int) gserv.MeasureString(s.Remove(CursorIndex), font, zeroP, measureFormat ).Width; }
         }
     } 
 
