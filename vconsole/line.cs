@@ -123,9 +123,11 @@ public partial class line {
         }
     }
     public void SelectRigth(int count) {
+        throw new NotImplementedException();
         // SelectedLength += count;
     }
     public void SelectLeft(int count) {
+        throw new NotImplementedException();
         // CursorIndex -= count;
         // SelectedLength += count;
     }

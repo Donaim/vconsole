@@ -60,7 +60,7 @@ public class vtextbox : Control {
         switch (e.KeyCode)
         {
             case Keys.Back:
-                lh.Current.Remove();
+                lh.Remove();
                 break;
             case Keys.Escape:
                 // Close();

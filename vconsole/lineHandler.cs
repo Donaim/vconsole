@@ -44,12 +44,19 @@ public class lineHandler {
         LineIndex++;
     }
     public void Remove() {
-        if(Current.Length > 0) {
+        if(Current.CursorIndex > 0) {
             Current.Remove();
         }
-        else if (lines.Count > 0) {
-            lines.Remove(Current);
-            GoUp();
+        else if (lines.Count > 1) {
+            var curr = Current;
+            curr.Left();
+            lines.Remove(curr);
+
+            if(curr.Length > 0) {
+                int cindex = Current.CursorIndex;
+                Current.Insert(curr.Text);
+                Current.CursorIndex = cindex;
+            }
         }
     }
 
