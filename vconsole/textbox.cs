@@ -35,12 +35,30 @@ public class vtextbox : Control {
         lh.Current.Insert(s);
     }
 
+    public int DX {get; set;} = 5;
+    public int DY {get; set;} = 5;
     // GRAPHICS
     protected override void OnPaint(PaintEventArgs e) {
         e.Graphics.Clear(BackColor);
+        Point p = new Point(DX, DY);
 
+        int clipHeight = (int)e.Graphics.ClipBounds.Height - p.Y - p.Y;
+
+        int h = 0, 
+            hbc = 0; //height before cursor
+        int i = 0;
+        foreach(var l in lh.get) {
+            h += l.Height;
+            if(i < lh.LineIndex) { hbc = h; }
+            i++;
+        }
+
+        int coff = -Max(0, (h - hbc) - clipHeight);
+
+        int offset = -Max(0, (h + coff) - (clipHeight - 1));
+        p.Offset(0, offset);
+        
         // int h = 0;
-        Point p = new Point(5, 5);
         foreach (var l in lh.get)
         {
             l.Draw(e.Graphics, p);
