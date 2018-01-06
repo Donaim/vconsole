@@ -6,7 +6,7 @@ using System.Linq;
 
 using static System.Math;
 
-class vtextbox : Control {
+public class vtextbox : Control {
     lineHandler lh = new lineHandler();
 
     public vtextbox() {
@@ -63,6 +63,10 @@ class vtextbox : Control {
                 break;
             case Keys.Up:
                 lh.GoUp();
+                break;
+
+            case Keys.V when e.Control:
+                lh.Current.Insert(Clipboard.GetText());
                 break;
 
             default: return;

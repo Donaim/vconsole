@@ -6,7 +6,7 @@ using System.Linq;
 
 using static System.Math;
 
-class lineHandler {
+public class lineHandler {
     public lineHandler()
     {
         lines.Add(new line(this, "", 0));
@@ -30,7 +30,7 @@ class lineHandler {
             lines.Add(l);
         }
         else{
-            lines.Insert(lineIndex, l);
+            lines.Insert(lineIndex + 1, l);
         }
         LineIndex++;
     }

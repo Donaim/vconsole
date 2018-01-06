@@ -6,7 +6,35 @@ using System.Linq;
 
 using static System.Math;
 
-class line {
+public partial class line{
+    class selection {
+        line parent;
+        public selection(line p) {
+            parent = p;
+        }
+        
+        int start;
+        bool Q;
+
+        public int Start {
+            get {
+                if(Q) { return start; }
+                else { return parent.CursorIndex; }
+            }
+        }
+        public int Length => Abs(parent.CursorIndex - Start);
+
+        public void BeginSelection() {
+            start = parent.CursorIndex;
+            Q = true;
+        }
+        public void EndSelection() {
+            Q = false;
+        }
+    }
+}
+
+public partial class line {
     string s = "";
     public string Text => s;
     public int Length => s.Length;
@@ -16,19 +44,17 @@ class line {
         get => cindex;
         set => cindex = Max(0, Min(value, s.Length));
     }
+    public bool CursorVisible {get; set;} = true;
     public int MaxInd => Text.Length - 1;
-    
-    int seLength = 0;
-    public int SelectedLength {
-        get => seLength;
-        set => seLength = Max(0, Min(value, (Length + 1) - CursorIndex));
-    }
+
+    selection se;
 
     public readonly lineHandler lh;
     public line(lineHandler lh, string initS = "", int initIndex = 0) {
         s = initS;
         CursorIndex = initIndex;
         this.lh = lh;
+        se = new selection(this);
     }
 
 
@@ -60,7 +86,7 @@ class line {
 
     public string Split() { // fore new line
         if(CursorIndex <= 0) { return ""; }
-        else if(CursorIndex > Length) { return ""; }
+        else if(CursorIndex > MaxInd) { return ""; }
         else {
             string re = s.Substring(CursorIndex);
             s = s.Remove(CursorIndex);
@@ -68,20 +94,22 @@ class line {
         }
     }
     public void Remove() {
-        if(SelectedLength <= 0) { SelectedLength++; }
+        // if(SelectedLength <= 0) { SelectedLength++; }
+        int len = se.Length;
+        if(len <= 0) { len++; }
 
         if(CursorIndex > 0) {
-            s = s.Remove(CursorIndex - 1, SelectedLength);
-            CursorIndex -= SelectedLength;
-            SelectedLength = 0;
+            s = s.Remove(CursorIndex - 1, len);
+            CursorIndex -= len;
+            se.EndSelection();
         }
     }
     public void SelectRigth(int count) {
-        SelectedLength += count;
+        // SelectedLength += count;
     }
     public void SelectLeft(int count) {
-        CursorIndex -= count;
-        SelectedLength += count;
+        // CursorIndex -= count;
+        // SelectedLength += count;
     }
 
     // Graphics
@@ -111,7 +139,7 @@ class line {
         
         g.DrawString(s, font, brush, pos);
 
-        if(lh.Current == this) {
+        if(lh.Current == this && CursorVisible) {
             g.FillRectangle(cursorBrush, pos.X + WidthBeforeCursor + 1, pos.Y, 1, Height);
         }
     }

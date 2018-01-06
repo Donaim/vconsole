@@ -34,6 +34,24 @@
                 "focus": true
             },
             "problemMatcher": "$msCompile"
+        },
+        {
+            "label": "buildRelease",
+            "type": "shell",
+            "command": "msbuild",
+            "args": [
+                "/property:Configuration=Release",
+                "/property:GenerateFullPaths=true",
+                "/t:build",
+                "/verbosity:minimal",
+                "/property:WarningLevel=2"
+            ],
+            "group": "build",
+            "presentation": {
+                "reveal": "always",
+                "focus": true
+            },
+            "problemMatcher": "$msCompile"
         }
     ]
 }

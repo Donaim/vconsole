@@ -1,0 +1,6 @@
+/home/d0naim/dev/vconsole/Release/vconsole.dll
+/home/d0naim/dev/vconsole/Release/vconsole.pdb
+/home/d0naim/dev/vconsole/vconsole/obj/Release/vconsole.csprojResolveAssemblyReference.cache
+/home/d0naim/dev/vconsole/vconsole/obj/Release/vconsole.csproj.CoreCompileInputs.cache
+/home/d0naim/dev/vconsole/vconsole/obj/Release/vconsole.dll
+/home/d0naim/dev/vconsole/vconsole/obj/Release/vconsole.pdb
