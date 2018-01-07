@@ -29,7 +29,7 @@ public class lockedList<T> {
 }
 
 public class lineHandler {
-    readonly vtextbox parent;
+    internal readonly vtextbox parent;
     public readonly lockedList<line> list;
     public lineHandler(vtextbox p)
     {

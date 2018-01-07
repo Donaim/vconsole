@@ -24,13 +24,13 @@ public class vtextbox : Control {
     }
 
     // FUNCTIONALITY
-
+    protected internal virtual void textChanged() {}
     public override string Text {
         get => string.Join("\n", lh.list.Source.Select(o => o.Text));
         set => lh.SetText(value);
     }
     public int TextLength => Text.Length;
-    public void AppendText(string s, bool refresh = true) 
+    public virtual void AppendText(string s, bool refresh = true) 
     {
         lh.Current.Insert(s);
         if(refresh) { Refresh(); }

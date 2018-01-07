@@ -36,7 +36,14 @@ public partial class line{
 
 public partial class line {
     string s = "";
-    public string Text => s;
+    public string Text
+    { 
+        get => s;
+        private set {
+            s = value;
+            lh.parent.textChanged();
+        }
+    }
     public int Length => s.Length;
 
     int cindex = 0;
@@ -51,7 +58,7 @@ public partial class line {
 
     public readonly lineHandler lh;
     public line(lineHandler lh, string initS = "", int initIndex = 0) {
-        s = initS;
+        Text =  initS;
         CursorIndex = initIndex;
         this.lh = lh;
         se = new selection(this);
@@ -79,10 +86,10 @@ public partial class line {
     }
     void insertHere(string what) {
         if(CursorIndex >= MaxInd) {
-            s += what;
+            Text += what;
         } 
         else{
-            s = s.Insert(CursorIndex, what); 
+            Text = s.Insert(CursorIndex, what); 
         }
         CursorIndex += what.Length; 
     }
@@ -107,7 +114,7 @@ public partial class line {
         else if(CursorIndex > MaxInd) { return ""; }
         else {
             string re = s.Substring(CursorIndex);
-            s = s.Remove(CursorIndex);
+            Text = s.Remove(CursorIndex);
             return re; 
         }
     }
@@ -117,7 +124,7 @@ public partial class line {
         if(len <= 0) { len++; }
 
         if(CursorIndex > 0) {
-            s = s.Remove(CursorIndex - 1, len);
+            Text = s.Remove(CursorIndex - 1, len);
             CursorIndex -= len;
             se.EndSelection();
         }
