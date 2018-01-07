@@ -58,9 +58,9 @@ public partial class line {
 
     public readonly lineHandler lh;
     public line(lineHandler lh, string initS = "", int initIndex = 0) {
+        this.lh = lh;
         Text =  initS;
         CursorIndex = initIndex;
-        this.lh = lh;
         se = new selection(this);
     }
 
